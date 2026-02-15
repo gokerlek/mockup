@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moodivation - Modern Dashboard Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+      body {
+          font-family: 'Inter', sans-serif;
+          margin: 0;
+          background: #051124;
+          color: white;
+          overflow-x: hidden;
+      }
+
+      /* İlk görseldeki o koyu mavi gradyan */
+      .hero-bg {
+          background: var(--bg-color, #886AAF);
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          position: relative;
+          transition: background 0.5s ease;
+      }
+
+      /* 45 Derece Perspektif Konteynırı */
+      .perspective-container {
+          perspective: var(--perspective, 2500px);
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+      }
+
+      .mockup-card {
+          width: var(--width, 100%);
+          height: var(--height, auto);
+          aspect-ratio: var(--aspect-ratio, auto);
+          transform: translate(var(--move-x, 0px), var(--move-y, 0px)) rotateY(var(--rotate-y, -38deg)) rotateX(var(--rotate-x, 12deg)) rotateZ(var(--rotate-z, 4deg)) scale(var(--scale, 1));
+          transform-style: preserve-3d;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          transition: transform 0.3s ease-out;
+          background: white; /* Görsel yüklenene kadar beyaz kalsın */
+          position: relative;
+          
+          /* Yansıma Efekti - Daha yumuşak geçiş */
+          -webkit-box-reflect: below 2px linear-gradient(to bottom, rgba(255,255,255,0.2) 0%, transparent 80%);
+      }
+
+      /* Yansıma Bulanıklığı için Overlay */
+      .mockup-card::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: -50%;
+          width: 200%;
+          height: 200px; /* Daha geniş ve yüksek alan */
+          background: transparent;
+          backdrop-filter: blur(var(--blur, 4px));
+          -webkit-backdrop-filter: blur(var(--blur, 4px));
+          pointer-events: none;
+          z-index: 5;
+          margin-top: 2px;
+          mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+          -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 70%);
+      }
+
+      .mockup-card:hover {
+          transform: rotateY(calc(var(--rotate-y, -38deg) + 10deg)) rotateX(calc(var(--rotate-x, 12deg) - 4deg)) rotateZ(calc(var(--rotate-z, 4deg) - 2deg)) scale(calc(var(--scale, 1) * 1.02));
+      }
+
+      /* Parlama Efekti (Cam gibi durması için) */
+      .glossy-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+          pointer-events: none;
+          z-index: 10;
+          border-radius: 12px;
+      }
+
+      .check-bullet {
+          width: 28px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+      }
+
+      /* Arka plandaki yükseliş oku grafiği (image.jpg'deki gibi) */
+      #hero-logo-container {
+          position: absolute;
+          z-index: 20;
+          pointer-events: none;
+          transform: translate(var(--logo-move-x, 0px), var(--logo-move-y, 0px));
+      }
+      
+      .bg-graph-arrow {
+          position: absolute;
+          right: var(--icon-right, 15%);
+          top: var(--icon-top, 20%);
+          width: var(--icon-size, 400px);
+          height: var(--icon-size, 400px);
+          opacity: var(--icon-opacity, 0.1);
+          z-index: 0;
+          pointer-events: none;
+          transform: translate(var(--icon-move-x, 0px), var(--icon-move-y, 0px));
+          transition: all 0.3s ease;
+          object-fit: contain;
+      }
+
+      /* Tab Stilleri */
+      .tab-btn {
+          color: #94a3b8;
+          border: 1px solid transparent;
+      }
+      .tab-btn:hover {
+          color: white;
+          background: rgba(255, 255, 255, 0.05);
+      }
+      .tab-btn.active {
+          color: white;
+          background: #2563eb;
+          border-color: rgba(255, 255, 255, 0.1);
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+          width: 5px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+      }
+  </style>
+</head>
+<body>
+
+<div class="hero-bg">
+  <!-- Arka Plan Süslemesi -->
+  <div id="bg-icon-container" class="bg-graph-arrow">
+    <svg id="bg-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-full h-full">
+      <path d="M3 17l6-6 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M17 7h4v4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <img id="bg-img-icon" src="" alt="Background Icon" class="w-full h-full hidden object-contain">
+  </div>
+
+  <div class="container mx-auto px-6 lg:px-20 relative z-10">
+    <!-- Ayarlar Butonu (Çark) -->
+    <button id="settings-toggle" class="fixed bottom-10 left-10 z-[60] bg-blue-600 hover:bg-blue-700 p-3 rounded-full shadow-lg transition-all border border-white/20">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+    </button>
+
+    <!-- Ayarlar Paneli -->
+    <div id="settings-panel" class="fixed bottom-24 left-10 z-50 bg-black/80 backdrop-blur-xl p-0 rounded-2xl border border-white/20 text-sm w-[90vw] lg:w-[800px] max-h-[80vh] opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4 flex flex-col overflow-hidden">
+      <!-- Panel Header & Tabs -->
+      <div class="flex items-center justify-between border-b border-white/10 bg-white/5 px-6 py-4 flex-shrink-0">
+        <div class="flex items-center gap-6">
+          <h3 class="font-bold text-lg flex items-center gap-2 mr-4">
+            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            Ayarlar
+          </h3>
+          <div class="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+            <button onclick="switchTab('tab-content')" class="tab-btn active px-4 py-1.5 rounded-lg text-xs font-semibold transition-all">İçerik</button>
+            <button onclick="switchTab('tab-mockup')" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold transition-all">Mockup</button>
+            <button onclick="switchTab('tab-background')" class="tab-btn px-4 py-1.5 rounded-lg text-xs font-semibold transition-all">Arka Plan</button>
+          </div>
+        </div>
+        <button onclick="settingsToggle.click()" class="text-gray-400 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      
+      <div class="overflow-y-auto p-6 custom-scrollbar flex-grow">
+        <!-- Tab: Content -->
+        <div id="tab-content" class="tab-content space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+              <label class="block text-xs text-blue-400 font-bold uppercase tracking-wider">Logo Ayarları</label>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-4">
+                <div>
+                  <label class="block text-[10px] text-gray-500 uppercase mb-2">Logo Yükle</label>
+                  <input type="file" id="logo-upload" accept="image/*" class="w-full text-[10px] text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Boyut: <span id="val-logo-size">60</span>px</label>
+                    <input type="range" id="input-logo-size" min="20" max="500" value="60" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                  <div class="flex items-end">
+                    <button onclick="removeLogo()" class="w-full py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition rounded-lg text-[10px] font-bold border border-red-500/20">Logoyu Kaldır</button>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Konum X: <span id="val-logo-move-x">0</span>px</label>
+                    <input type="range" id="input-logo-move-x" min="-1000" max="1000" value="0" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Konum Y: <span id="val-logo-move-y">0</span>px</label>
+                    <input type="range" id="input-logo-move-y" min="-1000" max="1000" value="0" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <label class="block text-xs text-blue-400 font-bold uppercase tracking-wider">Metin Ayarları</label>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] text-gray-500 uppercase mb-1">Başlık Rengi</label>
+                    <input type="color" id="input-title-color" value="#FFFFFF" class="w-full h-8 bg-transparent border border-white/10 rounded cursor-pointer">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-gray-500 uppercase mb-1">Madde Rengi</label>
+                    <input type="color" id="input-bullet-color" value="#FFFFFF" class="w-full h-8 bg-transparent border border-white/10 rounded cursor-pointer">
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-500 uppercase mb-1">Ana Başlık</label>
+                  <textarea id="input-title" class="w-full bg-black/20 border border-white/10 rounded-lg p-3 text-[11px] focus:outline-none focus:border-blue-500 transition min-h-[80px]" placeholder="Başlık girin..."></textarea>
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-500 uppercase mb-1">Maddeler</label>
+                  <div id="bullets-container" class="space-y-2 max-h-[120px] overflow-y-auto pr-1 custom-scrollbar">
+                    <!-- Maddeler buraya dinamik eklenecek -->
+                  </div>
+                  <button onclick="addBullet()" class="mt-3 w-full py-2 border border-dashed border-blue-500/30 rounded-lg text-[10px] text-blue-400 hover:bg-blue-500/10 transition-all">+ Yeni Madde</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Mockup -->
+        <div id="tab-mockup" class="tab-content hidden space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Temel Ayarlar -->
+            <div class="space-y-4">
+              <label class="block text-xs text-blue-400 font-bold uppercase tracking-wider">Görsel & Temel</label>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-4">
+                <div>
+                  <label class="block text-[10px] text-gray-500 uppercase mb-2">Görsel Yükle</label>
+                  <input type="file" id="image-upload" accept="image/*" class="w-full text-[10px] text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-500 uppercase mb-1">En-Boy Oranı</label>
+                  <select id="input-aspect" class="w-full bg-black/20 border border-white/10 rounded-lg p-2 text-[10px] focus:outline-none focus:border-blue-500">
+                    <option value="auto">Otomatik</option>
+                    <option value="1/1">1:1</option>
+                    <option value="4/3">4:3</option>
+                    <option value="16/9">16:9</option>
+                    <option value="21/9">21:9</option>
+                    <option value="3/4">3:4</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Perspektif: <span id="val-perspective">2500</span>px</label>
+                  <input type="range" id="input-perspective" min="500" max="5000" value="2500" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Gen: <span id="val-width">100</span>%</label>
+                    <input type="range" id="input-width" min="10" max="150" value="100" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Yük: <span id="val-height">100</span>%</label>
+                    <input type="range" id="input-height" min="10" max="150" value="100" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rotasyon & Görünüm -->
+            <div class="space-y-4">
+              <label class="block text-xs text-blue-400 font-bold uppercase tracking-wider">3D Rotasyon</label>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-4">
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Rotate X: <span id="val-rotate-x">12</span>°</label>
+                  <input type="range" id="input-rotate-x" min="-90" max="90" value="12" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Rotate Y: <span id="val-rotate-y">-38</span>°</label>
+                  <input type="range" id="input-rotate-y" min="-90" max="90" value="-38" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Rotate Z: <span id="val-rotate-z">4</span>°</label>
+                  <input type="range" id="input-rotate-z" min="-90" max="90" value="4" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Ölçek: <span id="val-scale">1.0</span></label>
+                  <input type="range" id="input-scale" min="0.5" max="2.0" step="0.1" value="1.0" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+              </div>
+            </div>
+
+            <!-- Konum & Efekt -->
+            <div class="space-y-4">
+              <label class="block text-xs text-blue-400 font-bold uppercase tracking-wider">Konum & Efekt</label>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-4">
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Pozisyon X: <span id="val-move-x">0</span>px</label>
+                  <input type="range" id="input-move-x" min="-500" max="500" value="0" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Pozisyon Y: <span id="val-move-y">0</span>px</label>
+                  <input type="range" id="input-move-y" min="-500" max="500" value="0" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                  <label class="block text-[10px] text-gray-400 mb-1 uppercase">Yansıma Blur: <span id="val-blur">4</span>px</label>
+                  <input type="range" id="input-blur" min="0" max="40" value="4" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: Background -->
+        <div id="tab-background" class="tab-content hidden space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+              <label class="block text-xs text-blue-400 font-bold uppercase tracking-wider">Renk & Gradyan</label>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] text-gray-500 uppercase mb-1">Düz Renk</label>
+                    <input type="color" id="input-bg-color" value="#886AAF" class="w-full h-10 bg-transparent border border-white/10 rounded cursor-pointer">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-gray-500 uppercase mb-1">Gradyan</label>
+                    <select id="input-bg-gradient" class="w-full bg-black/20 border border-white/10 rounded-lg p-2.5 text-[10px] focus:outline-none focus:border-blue-500 h-10">
+                      <option value="none">Yok</option>
+                      <option value="linear-gradient(105deg, #051124 0%, #0a265c 40%, #1e40af 100%)">Lacivert</option>
+                      <option value="linear-gradient(135deg, #886AAF 0%, #4a3a8c 100%)">Purple</option>
+                      <option value="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">Flame</option>
+                      <option value="linear-gradient(135deg, #5ee7df 0%, #b490d1 100%)">Soft</option>
+                      <option value="linear-gradient(135deg, #667eea 0%, #764ba2 100%)">Plum</option>
+                      <option value="linear-gradient(135deg, #2af598 0%, #009efd 100%)">Ocean</option>
+                      <option value="linear-gradient(135deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%)">Sunset</option>
+                      <option value="linear-gradient(135deg, #fbda61 0%, #ff5acd 100%)">Lemon</option>
+                      <option value="linear-gradient(135deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%)">Cosmic</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <label class="block text-xs text-blue-400 font-bold uppercase tracking-wider">Arka Plan İkonu</label>
+              <div class="bg-white/5 p-4 rounded-xl border border-white/10 space-y-4">
+                <div class="flex gap-2">
+                  <div class="flex-grow">
+                    <label class="block text-[10px] text-gray-500 uppercase mb-1">İkon Tipi</label>
+                    <select id="input-icon-type" class="w-full bg-black/20 border border-white/10 rounded-lg p-2 text-[10px] focus:outline-none focus:border-blue-500">
+                      <option value="arrow">Yükseliş Oku</option>
+                      <option value="chart">Grafik</option>
+                      <option value="star">Yıldız</option>
+                      <option value="circle">Daire</option>
+                      <option value="heart">Kalp</option>
+                      <option value="custom">Özel Yükle</option>
+                      <option value="none">Gizle</option>
+                    </select>
+                  </div>
+                  <div id="custom-icon-upload-area" class="hidden flex items-end">
+                    <input type="file" id="icon-upload" accept="image/*" class="hidden">
+                    <button onclick="document.getElementById('icon-upload').click()" class="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold transition-all">Yükle</button>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Boyut: <span id="val-icon-size">400</span>px</label>
+                    <input type="range" id="input-icon-size" min="50" max="1000" value="400" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Opaklık: <span id="val-icon-opacity">0.1</span></label>
+                    <input type="range" id="input-icon-opacity" min="0" max="1" step="0.05" value="0.1" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Konum X: <span id="val-icon-move-x">0</span>px</label>
+                    <input type="range" id="input-icon-move-x" min="-1000" max="1000" value="0" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] text-gray-400 mb-1 uppercase">Konum Y: <span id="val-icon-move-y">0</span>px</label>
+                    <input type="range" id="input-icon-move-y" min="-1000" max="1000" value="0" class="w-full h-1.5 bg-blue-600 rounded-lg appearance-none cursor-pointer">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-6 border-t border-white/10 bg-white/5 flex gap-3 flex-shrink-0">
+        <button onclick="resetSettings()" class="flex-grow py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition rounded-xl text-xs font-bold border border-red-500/20">Ayarları Sıfırla</button>
+        <button onclick="settingsToggle.click()" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white transition rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20">Kapat</button>
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+
+      <!-- Metin İçeriği (Tam olarak paylaştığın image.jpg metinleri) -->
+      <div class="w-full lg:w-1/2 space-y-8 py-10 order-1">
+        <div id="hero-logo-container" class="mb-6 hidden">
+          <img id="hero-logo" src="" alt="Logo" class="max-w-full h-auto object-contain">
+        </div>
+        <h1 id="hero-title" class="text-6xl lg:text-7xl font-extrabold leading-[1.2] tracking-tight">
+          İlk Çalışan <br>
+          Bağlılığı <br>
+          Analiziniz <br>
+          <span class="text-white">Ücretsiz</span>
+        </h1>
+
+        <div id="hero-bullets" class="space-y-5 pt-4">
+          <div class="flex items-center gap-4">
+            <div class="check-bullet">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4">
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <p class="text-2xl font-bold text-blue-100">Benchmark karşılaştırmalı</p>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="check-bullet">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4">
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <p class="text-2xl font-bold text-blue-100">AI destekli • PDF raporlu</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Mockup (image 1.png kullanımı) -->
+      <div class="w-full lg:w-1/2 perspective-container order-2">
+        <div class="mockup-card">
+          <div class="glossy-overlay"></div>
+          <img
+            id="mockup-img"
+            src="../web/public/img_1.png"
+            alt="Moodivation Dashboard"
+            class="w-full h-full object-cover rounded-xl block"
+            onerror="this.parentElement.innerHTML='<div class=\'bg-white text-gray-800 p-20 text-center rounded-xl\'>Görsel yüklenemedi (image 1.png)</div>'"
+          >
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+    const mockupCard = document.querySelector('.mockup-card');
+    const container = document.querySelector('.perspective-container');
+    const settingsToggle = document.getElementById('settings-toggle');
+    const settingsPanel = document.getElementById('settings-panel');
+    
+    const inputs = {
+        perspective: document.getElementById('input-perspective'),
+        width: document.getElementById('input-width'),
+        height: document.getElementById('input-height'),
+        moveX: document.getElementById('input-move-x'),
+        moveY: document.getElementById('input-move-y'),
+        aspect: document.getElementById('input-aspect'),
+        rotateX: document.getElementById('input-rotate-x'),
+        rotateY: document.getElementById('input-rotate-y'),
+        rotateZ: document.getElementById('input-rotate-z'),
+        scale: document.getElementById('input-scale'),
+        blur: document.getElementById('input-blur'),
+        bgColor: document.getElementById('input-bg-color'),
+        bgGradient: document.getElementById('input-bg-gradient'),
+        titleColor: document.getElementById('input-title-color'),
+        bulletColor: document.getElementById('input-bullet-color'),
+        iconType: document.getElementById('input-icon-type'),
+        iconSize: document.getElementById('input-icon-size'),
+        iconOpacity: document.getElementById('input-icon-opacity'),
+        iconMoveX: document.getElementById('input-icon-move-x'),
+        iconMoveY: document.getElementById('input-icon-move-y'),
+        logoSize: document.getElementById('input-logo-size'),
+        logoMoveX: document.getElementById('input-logo-move-x'),
+        logoMoveY: document.getElementById('input-logo-move-y')
+    };
+    
+    const values = {
+        perspective: document.getElementById('val-perspective'),
+        width: document.getElementById('val-width'),
+        height: document.getElementById('val-height'),
+        moveX: document.getElementById('val-move-x'),
+        moveY: document.getElementById('val-move-y'),
+        rotateX: document.getElementById('val-rotate-x'),
+        rotateY: document.getElementById('val-rotate-y'),
+        rotateZ: document.getElementById('val-rotate-z'),
+        scale: document.getElementById('val-scale'),
+        blur: document.getElementById('val-blur'),
+        iconSize: document.getElementById('val-icon-size'),
+        iconOpacity: document.getElementById('val-icon-opacity'),
+        iconMoveX: document.getElementById('val-icon-move-x'),
+        iconMoveY: document.getElementById('val-icon-move-y'),
+        logoSize: document.getElementById('val-logo-size'),
+        logoMoveX: document.getElementById('val-logo-move-x'),
+        logoMoveY: document.getElementById('val-logo-move-y')
+    };
+
+    const defaultSettings = {
+        perspective: 2500,
+        width: 100,
+        height: 100,
+        moveX: 0,
+        moveY: 0,
+        aspect: 'auto',
+        rotateX: 12,
+        rotateY: -38,
+        rotateZ: 4,
+        scale: 1.0,
+        blur: 4,
+        bgColor: '#886AAF',
+        bgGradient: 'none',
+        titleColor: '#FFFFFF',
+        bulletColor: '#FFFFFF',
+        iconType: 'arrow',
+        iconSize: 400,
+        iconOpacity: 0.1,
+        iconMoveX: 0,
+        iconMoveY: 0,
+        logoSize: 60,
+        logoMoveX: 0,
+        logoMoveY: 0,
+        title: 'İlk Çalışan <br>\nBağlılığı <br>\nAnaliziniz <br>\nÜcretsiz',
+        bullets: [
+            'Benchmark karşılaştırmalı',
+            'AI destekli • PDF raporlu'
+        ]
+    };
+
+    // Metin Kontrolleri
+    const titleInput = document.getElementById('input-title');
+    const bulletsContainer = document.getElementById('bullets-container');
+    const heroTitle = document.getElementById('hero-title');
+    const heroBullets = document.getElementById('hero-bullets');
+
+    function addBullet(value = '') {
+        const div = document.createElement('div');
+        div.className = 'flex gap-2';
+        div.innerHTML = `
+            <input type="text" class="bullet-input w-full bg-blue-600/10 border border-white/10 rounded p-1 text-[10px] focus:outline-none" value="${value}" placeholder="Madde metni...">
+            <button onclick="this.parentElement.remove(); updateTextContent();" class="text-red-400 hover:text-red-300">×</button>
+        `;
+        bulletsContainer.appendChild(div);
+        div.querySelector('input').addEventListener('input', updateTextContent);
+        if (value === '') updateTextContent();
+    }
+
+    function updateTextContent() {
+        // Başlık
+        heroTitle.innerHTML = titleInput.value.replace(/\n/g, '<br>');
+        heroTitle.style.color = inputs.titleColor.value;
+        
+        // Maddeler
+        const bulletInputs = document.querySelectorAll('.bullet-input');
+        heroBullets.innerHTML = '';
+        bulletInputs.forEach(input => {
+            const text = input.value;
+            if (text.trim() !== '') {
+                const item = document.createElement('div');
+                item.className = 'flex items-center gap-4';
+                item.innerHTML = `
+                    <div class="check-bullet">
+                      <svg class="w-6 h-6" style="color: ${inputs.bulletColor.value}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4">
+                        <path d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    </div>
+                    <p class="text-2xl font-normal" style="color: ${inputs.bulletColor.value}">${text}</p>
+                `;
+                heroBullets.appendChild(item);
+            }
+        });
+        saveToLocal();
+    }
+
+    titleInput.addEventListener('input', updateTextContent);
+
+    // Görsel Yükleme
+    const imageUpload = document.getElementById('image-upload');
+    const mockupImg = document.getElementById('mockup-img');
+    const logoUpload = document.getElementById('logo-upload');
+    const heroLogo = document.getElementById('hero-logo');
+    const heroLogoContainer = document.getElementById('hero-logo-container');
+    const iconUpload = document.getElementById('icon-upload');
+    const bgImgIcon = document.getElementById('bg-img-icon');
+    const bgSvgIcon = document.getElementById('bg-svg-icon');
+
+    imageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                mockupImg.src = event.target.result;
+                localStorage.setItem('savedMockupImage', event.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    logoUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                heroLogo.src = event.target.result;
+                heroLogoContainer.classList.remove('hidden');
+                localStorage.setItem('savedHeroLogo', event.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    iconUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                bgImgIcon.src = event.target.result;
+                localStorage.setItem('savedBgIcon', event.target.result);
+                updateStyles(true);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function removeLogo() {
+        heroLogo.src = '';
+        heroLogoContainer.classList.add('hidden');
+        localStorage.removeItem('savedHeroLogo');
+        logoUpload.value = '';
+    }
+
+    function loadSavedImage() {
+        const savedImg = localStorage.getItem('savedMockupImage');
+        if (savedImg) {
+            mockupImg.src = savedImg;
+        }
+        
+        const savedLogo = localStorage.getItem('savedHeroLogo');
+        if (savedLogo) {
+            heroLogo.src = savedLogo;
+            heroLogoContainer.classList.remove('hidden');
+        }
+
+        const savedBgIcon = localStorage.getItem('savedBgIcon');
+        if (savedBgIcon) {
+            bgImgIcon.src = savedBgIcon;
+        }
+    }
+
+    // Toggle Panel
+    settingsToggle.addEventListener('click', () => {
+        const isOpen = settingsPanel.classList.contains('opacity-100');
+        if (isOpen) {
+            settingsPanel.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            settingsPanel.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+        } else {
+            settingsPanel.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            settingsPanel.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+        }
+    });
+
+    function switchTab(tabId) {
+        // Sekme içeriklerini gizle/göster
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        // Buton aktiflik durumunu güncelle
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('onclick').includes(tabId)) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    function saveToLocal() {
+        const settings = {};
+        Object.keys(inputs).forEach(key => {
+            settings[key] = inputs[key].value;
+        });
+        
+        // Metinleri de kaydet
+        settings.title = titleInput.value;
+        const bullets = [];
+        document.querySelectorAll('.bullet-input').forEach(input => bullets.push(input.value));
+        settings.bullets = bullets;
+
+        localStorage.setItem('mockupSettings', JSON.stringify(settings));
+    }
+
+    function loadFromLocal() {
+        const saved = localStorage.getItem('mockupSettings');
+        if (saved) {
+            const settings = JSON.parse(saved);
+            Object.keys(settings).forEach(key => {
+                if (inputs[key]) inputs[key].value = settings[key];
+            });
+
+            // Metinleri yükle
+            if (settings.title) {
+                titleInput.value = settings.title;
+            } else {
+                titleInput.value = defaultSettings.title.replace(/<br>\s*/g, '\n').replace(/<[^>]*>/g, (match) => match === '<br>' ? '' : match === '<span class="text-white">Ücretsiz</span>' ? 'Ücretsiz' : ''); // Basit temizleme
+                // Aslında defaultSettings.title'ı daha temiz tutmalıydık.
+            }
+            
+            bulletsContainer.innerHTML = '';
+            const bulletsToLoad = settings.bullets || defaultSettings.bullets;
+            bulletsToLoad.forEach(b => addBullet(b));
+            
+            updateTextContent();
+        } else {
+            // Varsayılan metinleri ayarla
+            titleInput.value = "İlk Çalışan\nBağlılığı\nAnaliziniz\nÜcretsiz"; 
+            // Daha iyi: default metni HTML'den alalım veya defaultSettings'i düzeltelim.
+            bulletsContainer.innerHTML = '';
+            defaultSettings.bullets.forEach(b => addBullet(b));
+            updateTextContent();
+        }
+    }
+
+    function updateStyles(save = true) {
+        const heroBg = document.querySelector('.hero-bg');
+        if (inputs.bgGradient.value !== 'none') {
+            heroBg.style.setProperty('--bg-color', inputs.bgGradient.value);
+        } else {
+            heroBg.style.setProperty('--bg-color', inputs.bgColor.value);
+        }
+
+        const bgIcon = document.getElementById('bg-icon-container');
+        bgIcon.style.setProperty('--icon-size', `${inputs.iconSize.value}px`);
+        bgIcon.style.setProperty('--icon-opacity', inputs.iconOpacity.value);
+        bgIcon.style.setProperty('--icon-move-x', `${inputs.iconMoveX.value}px`);
+        bgIcon.style.setProperty('--icon-move-y', `${inputs.iconMoveY.value}px`);
+        
+        // İkon tipi değiştirme
+        const iconPaths = {
+            arrow: '<path d="M3 17l6-6 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h4v4" stroke-linecap="round" stroke-linejoin="round"/>',
+            chart: '<path d="M18 20V10M12 20V4M6 20v-6" stroke-linecap="round" stroke-linejoin="round"/>',
+            star: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-linecap="round" stroke-linejoin="round"/>',
+            circle: '<circle cx="12" cy="12" r="10" stroke-linecap="round" stroke-linejoin="round"/>',
+            heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-linecap="round" stroke-linejoin="round"/>',
+            none: '',
+            custom: ''
+        };
+        
+        if (inputs.iconType.value === 'custom') {
+            bgSvgIcon.classList.add('hidden');
+            bgImgIcon.classList.remove('hidden');
+            document.getElementById('custom-icon-upload-area').classList.remove('hidden');
+        } else {
+            bgSvgIcon.classList.remove('hidden');
+            bgImgIcon.classList.add('hidden');
+            document.getElementById('custom-icon-upload-area').classList.add('hidden');
+            bgSvgIcon.innerHTML = iconPaths[inputs.iconType.value] || '';
+        }
+        bgIcon.style.display = inputs.iconType.value === 'none' ? 'none' : 'block';
+
+        container.style.setProperty('--perspective', `${inputs.perspective.value}px`);
+        mockupCard.style.setProperty('--width', `${inputs.width.value}%`);
+        mockupCard.style.setProperty('--height', inputs.height.value === '100' ? 'auto' : `${inputs.height.value}%`);
+        mockupCard.style.setProperty('--move-x', `${inputs.moveX.value}px`);
+        mockupCard.style.setProperty('--move-y', `${inputs.moveY.value}px`);
+        mockupCard.style.setProperty('--aspect-ratio', inputs.aspect.value);
+        mockupCard.style.setProperty('--rotate-x', `${inputs.rotateX.value}deg`);
+        mockupCard.style.setProperty('--rotate-y', `${inputs.rotateY.value}deg`);
+        mockupCard.style.setProperty('--rotate-z', `${inputs.rotateZ.value}deg`);
+        mockupCard.style.setProperty('--scale', inputs.scale.value);
+        mockupCard.style.setProperty('--blur', `${inputs.blur.value}px`);
+        
+        values.perspective.textContent = inputs.perspective.value;
+        values.width.textContent = inputs.width.value;
+        values.height.textContent = inputs.height.value;
+        values.moveX.textContent = inputs.moveX.value;
+        values.moveY.textContent = inputs.moveY.value;
+        values.rotateX.textContent = inputs.rotateX.value;
+        values.rotateY.textContent = inputs.rotateY.value;
+        values.rotateZ.textContent = inputs.rotateZ.value;
+        values.scale.textContent = inputs.scale.value;
+        values.blur.textContent = inputs.blur.value;
+        values.iconSize.textContent = inputs.iconSize.value;
+        values.iconOpacity.textContent = inputs.iconOpacity.value;
+        values.iconMoveX.textContent = inputs.iconMoveX.value;
+        values.iconMoveY.textContent = inputs.iconMoveY.value;
+
+        heroLogo.style.width = `${inputs.logoSize.value}px`;
+        heroLogoContainer.style.setProperty('--logo-move-x', `${inputs.logoMoveX.value}px`);
+        heroLogoContainer.style.setProperty('--logo-move-y', `${inputs.logoMoveY.value}px`);
+        
+        values.logoSize.textContent = inputs.logoSize.value;
+        values.logoMoveX.textContent = inputs.logoMoveX.value;
+        values.logoMoveY.textContent = inputs.logoMoveY.value;
+
+        if (save) saveToLocal();
+    }
+
+    Object.values(inputs).forEach(input => {
+        input.addEventListener('input', () => {
+            updateStyles(true);
+            if (input.id === 'input-title-color' || input.id === 'input-bullet-color') {
+                updateTextContent();
+            }
+        });
+    });
+
+    function resetSettings() {
+        localStorage.removeItem('mockupSettings');
+        localStorage.removeItem('savedMockupImage');
+        localStorage.removeItem('savedHeroLogo');
+        localStorage.removeItem('savedBgIcon');
+        mockupImg.src = '../web/public/img_1.png';
+        heroLogo.src = '';
+        bgImgIcon.src = '';
+        heroLogoContainer.classList.add('hidden');
+        logoUpload.value = '';
+        iconUpload.value = '';
+        Object.keys(defaultSettings).forEach(key => {
+            if (inputs[key]) inputs[key].value = defaultSettings[key];
+        });
+        
+        // Metinleri sıfırla
+        titleInput.value = "İlk Çalışan\nBağlılığı\nAnaliziniz\nÜcretsiz";
+        inputs.titleColor.value = defaultSettings.titleColor;
+        inputs.bulletColor.value = defaultSettings.bulletColor;
+        bulletsContainer.innerHTML = '';
+        defaultSettings.bullets.forEach(b => addBullet(b));
+
+        // İkonu sıfırla
+        inputs.iconType.value = defaultSettings.iconType;
+        inputs.iconSize.value = defaultSettings.iconSize;
+        inputs.iconOpacity.value = defaultSettings.iconOpacity;
+        inputs.iconMoveX.value = defaultSettings.iconMoveX;
+        inputs.iconMoveY.value = defaultSettings.iconMoveY;
+        
+        // Logo konumlarını sıfırla
+        inputs.logoMoveX.value = 0;
+        inputs.logoMoveY.value = 0;
+        
+        updateStyles(false);
+        updateTextContent();
+    }
+    
+    // İlk yüklemede çalıştır
+    loadSavedImage();
+    loadFromLocal();
+    updateStyles(false);
+</script>
+
+</body>
+</html>
